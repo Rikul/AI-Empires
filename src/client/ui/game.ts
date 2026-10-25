@@ -489,7 +489,7 @@ class GameView {
           <div class="hpbar"><i style="width:${Math.min(100, (v.map.resAmt[t] / RES_AMOUNT[r]) * 100)}%;background:var(--gold)"></i></div>
           <div class="muted small">Finite resource. Villagers carry 10 at a time to a compatible drop-off.</div>`;
       } else if (s.humanPlayer !== null && s.mode === 'live') {
-        info.innerHTML = `<h3>Controls</h3><div class="small muted">Left-click select · drag to box-select · Shift adds/removes · double-click selects all visible of that type · right-click to move / gather / attack / build · Ctrl+right-click attack-move · A attack-move · Ctrl+1–9 groups · H Town Center · . idle villager · WASD/arrows/edge pan · wheel zoom · Space pause</div>`;
+        info.innerHTML = `<h3>Controls</h3><div class="small muted">Left-click select · drag to box-select · Shift adds/removes · double-click selects all visible of that type · right-click to move / gather / attack / build · Ctrl+right-click attack-move · A attack-move · Ctrl+1–9 groups · H Town Center · . idle villager · WASD/arrows/middle-drag pan · wheel zoom · Space pause</div>`;
       } else {
         info.innerHTML = `<h3>Spectating</h3><div class="small muted">Click or drag to inspect units. Use each view's selector to switch between omniscient and either AI's knowledge. Wheel zooms the hovered view, WASD/arrows pan it, the minimap jumps.</div>`;
       }

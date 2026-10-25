@@ -440,7 +440,7 @@ export class InputController {
     vp.lookAt(x / es.length, y / es.length);
   }
 
-  /** Per-frame camera movement (keys + edge scrolling). */
+  /** Per-frame camera movement from keys. */
   update(dt: number) {
     const vp = (this.mouse.inside ? this.vpAt(this.mouse.x, this.mouse.y) : null) ?? this.renderer.viewports.find((v) => v.visible);
     if (!vp) return;
@@ -450,14 +450,6 @@ export class InputController {
     if (this.keys.has('arrowright') || this.keys.has('d')) dx += 1;
     if (this.keys.has('arrowup') || this.keys.has('w')) dz -= 1;
     if (this.keys.has('arrowdown') || this.keys.has('s')) dz += 1;
-    if (this.mouse.inside && document.hasFocus() && !this.dragStart && this.player !== null) {
-      const r = this.renderer.canvas.getBoundingClientRect();
-      const m = 6;
-      if (this.mouse.x <= r.left + m) dx -= 1;
-      if (this.mouse.x >= r.right - m) dx += 1;
-      if (this.mouse.y <= r.top + m) dz -= 1;
-      if (this.mouse.y >= r.bottom - m) dz += 1;
-    }
     if (dx || dz) vp.pan(dx * sp, dz * sp);
   }
 
