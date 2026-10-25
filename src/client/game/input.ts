@@ -359,14 +359,14 @@ export class InputController {
     const builders = this.ownSelectedUnits().filter((u) => u.type === 'Villager').map((u) => u.id);
     if (type === 'Wall') {
       if (!this.placing.wallStart) { this.placing.wallStart = t; this.updateGhost(e.clientX, e.clientY, vp); return; }
-      const err = this.issue({ t: 'build', units: builders, building: 'Wall', x: this.placing.wallStart[0], y: this.placing.wallStart[1], x2: t[0], y2: t[1] });
+      const err = this.issue({ t: 'build', units: builders, building: 'Wall', x: this.placing.wallStart[0], y: this.placing.wallStart[1], x2: t[0], y2: t[1], queue: e.shiftKey });
       if (err) this.cb.onMessage('Wall placed');
       if (e.shiftKey) this.placing.wallStart = null; else this.cancelPlacing();
       return;
     }
     const perr = placementError(this.state, this.player, type, t[0], t[1]);
     if (perr) { this.cb.onMessage(`Cannot place here: ${perr}`, 'error'); return; }
-    this.issue({ t: 'build', units: builders, building: type, x: t[0], y: t[1] });
+    this.issue({ t: 'build', units: builders, building: type, x: t[0], y: t[1], queue: e.shiftKey });
     if (!e.shiftKey) this.cancelPlacing();
     else if (!canAfford(this.state.players[this.player], BUILDINGS[type].cost, 2)) this.cancelPlacing();
   }

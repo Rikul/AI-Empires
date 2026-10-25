@@ -306,7 +306,12 @@ export function applyCommand(s: GameState, p: PlayerId, c: Command): string | nu
         placed.push(addBuilding(s, p, c.building, x, y, false));
       }
       if (!placed.length) return err ?? 'could not place';
-      for (const u of builders) setOrder(u, { k: 'build', target: placed[0].id });
+      const ids = placed.map((b) => b.id);
+      for (const u of builders) {
+        const o = u.order;
+        if (c.queue && o && o.k === 'build' && needsWork(s, u, o.target)) o.then = [...(o.then ?? []), ...ids].slice(0, MAX_BUILD_QUEUE);
+        else setOrder(u, { k: 'build', target: ids[0], then: ids.slice(1, MAX_BUILD_QUEUE + 1) });
+      }
       return null;
     }
     case 'assist': {
@@ -1143,12 +1148,30 @@ function farmLogic(s: GameState, u: UnitEnt, o: Extract<Order, { k: 'farm' }>) {
   moveTo(s, u, cx, cy);
 }
 
+const MAX_BUILD_QUEUE = 40;
+
+/** True if `id` is one of the unit's own buildings that still needs construction or repair. */
+function needsWork(s: GameState, u: UnitEnt, id: number): boolean {
+  const b = getEnt(s, id);
+  return !!b && b.kind === 'building' && b.owner === u.owner && b.hp > 0 && !(b.built && b.hp >= BUILDINGS[b.type].hp);
+}
+
+/** Switch to the next queued foundation that still needs work. Returns false if none is left. */
+function nextQueuedBuild(s: GameState, u: UnitEnt, o: Extract<Order, { k: 'build' }>): boolean {
+  const q = o.then ?? [];
+  while (q.length) {
+    const id = q.shift()!;
+    if (needsWork(s, u, id)) { setOrder(u, { k: 'build', target: id, then: q }); return true; }
+  }
+  return false;
+}
+
 function buildLogic(s: GameState, u: UnitEnt, o: Extract<Order, { k: 'build' }>) {
   const b = getEnt(s, o.target);
   u.gatherKind = null;
-  if (!b || b.kind !== 'building' || b.owner !== u.owner) { setOrder(u, null); return; }
+  if (!b || b.kind !== 'building' || b.owner !== u.owner) { if (!nextQueuedBuild(s, u, o)) setOrder(u, null); return; }
   const def = BUILDINGS[b.type];
-  if (b.built && b.hp >= def.hp) { afterBuild(s, u, b); return; }
+  if (b.built && b.hp >= def.hp) { if (!nextQueuedBuild(s, u, o)) afterBuild(s, u, b); return; }
   if (distTo(u, b) <= REACH + 0.2) {
     u.anim = 'build';
     u.path = null;

@@ -134,6 +134,34 @@ describe('rules', () => {
     }
   });
 
+  it('shift-queued foundations are built in order after the current one', () => {
+    const s = createInitialState(testConfig({ seed: 'buildq' }));
+    const p: PlayerId = 0;
+    const tc = buildings(s, p)[0];
+    const v = units(s, p).find((u) => u.type === 'Villager')!;
+    s.players[p].res.wood = 1000;
+    const houses: BuildingEnt[] = [];
+    for (const [i, [dx, dy]] of ([[6, 0], [0, 6], [-6, 0]] as const).entries()) {
+      const spot = findPlacement(s, p, 'House', tc.tx + dx, tc.ty + dy, 8)!;
+      expect(applyCommand(s, p, { t: 'build', units: [v.id], building: 'House', x: spot[0], y: spot[1], queue: i > 0 })).toBeNull();
+      houses.push(buildings(s, p).at(-1)!);
+    }
+    // still working on the first house; the others wait in the queue
+    expect(v.order).toMatchObject({ k: 'build', target: houses[0].id, then: [houses[1].id, houses[2].id] });
+    const done: number[] = [];
+    for (let t = 0; t < 20000 && done.length < 3; t++) {
+      step(s, []);
+      for (const h of houses) if (h.built && !done.includes(h.id)) done.push(h.id);
+    }
+    expect(done).toEqual(houses.map((h) => h.id));
+    // without queue, a new placement replaces the current job
+    const spot = findPlacement(s, p, 'House', tc.tx + 8, tc.ty + 8, 10)!;
+    applyCommand(s, p, { t: 'build', units: [v.id], building: 'House', x: spot[0], y: spot[1] });
+    const spot2 = findPlacement(s, p, 'House', tc.tx - 8, tc.ty - 8, 10)!;
+    applyCommand(s, p, { t: 'build', units: [v.id], building: 'House', x: spot2[0], y: spot2[1] });
+    expect(v.order).toMatchObject({ k: 'build', target: buildings(s, p).at(-1)!.id, then: [] });
+  });
+
   it('villagers deplete finite resources and deposit only at compatible drop-offs', () => {
     const s = createInitialState(testConfig({ seed: 'gather' }));
     const S = s.map.size;

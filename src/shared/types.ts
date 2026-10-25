@@ -49,7 +49,7 @@ export type Order =
   | { k: 'attack'; target: number; hunt?: boolean }
   | { k: 'gather'; tx: number; ty: number; res: number }
   | { k: 'farm'; target: number }
-  | { k: 'build'; target: number }
+  | { k: 'build'; target: number; /** foundations to build next, in order */ then?: number[] }
   | { k: 'guard'; x: number; y: number; r: number }
   | { k: 'explore'; x: number; y: number };
 
@@ -187,7 +187,7 @@ export type Command =
   | { t: 'move'; units: number[]; x: number; y: number; attack?: boolean }
   | { t: 'attack'; units: number[]; target: number }
   | { t: 'gather'; units: number[]; x: number; y: number }
-  | { t: 'build'; units: number[]; building: BuildingType; x: number; y: number; x2?: number; y2?: number }
+  | { t: 'build'; units: number[]; building: BuildingType; x: number; y: number; x2?: number; y2?: number; /** append to builders' current build job instead of replacing it */ queue?: boolean }
   | { t: 'assist'; units: number[]; target: number }
   | { t: 'train'; building: number; unit: UnitType; count: number }
   | { t: 'research'; building: number; tech: TechType }

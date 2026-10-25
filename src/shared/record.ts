@@ -98,9 +98,10 @@ function validateCommand(v: V, c: unknown, path: string): c is Command {
     case 'attack': v.keys(c, path, ['t', 'units', 'target']); v.ids(c.units, `${path}.units`); v.int(c.target, `${path}.target`, 0, 1e9); break;
     case 'gather': v.keys(c, path, ['t', 'units', ...pointKeys]); v.ids(c.units, `${path}.units`); coord('x'); coord('y'); break;
     case 'build':
-      v.keys(c, path, ['t', 'units', 'building', 'x', 'y', 'x2', 'y2']); v.ids(c.units, `${path}.units`); v.oneOf(c.building, `${path}.building`, BUILDING_TYPES); coord('x'); coord('y');
+      v.keys(c, path, ['t', 'units', 'building', 'x', 'y', 'x2', 'y2', 'queue']); v.ids(c.units, `${path}.units`); v.oneOf(c.building, `${path}.building`, BUILDING_TYPES); coord('x'); coord('y');
       if (c.x2 !== undefined) coord('x2');
       if (c.y2 !== undefined) coord('y2');
+      if (c.queue !== undefined && typeof c.queue !== 'boolean') v.fail(`${path}.queue`, 'must be boolean');
       break;
     case 'assist': v.keys(c, path, ['t', 'units', 'target']); v.ids(c.units, `${path}.units`); v.int(c.target, `${path}.target`, 0, 1e9); break;
     case 'train': v.keys(c, path, ['t', 'building', 'unit', 'count']); v.int(c.building, `${path}.building`, 0, 1e9); v.oneOf(c.unit, `${path}.unit`, UNIT_TYPES); v.int(c.count, `${path}.count`, 1, 10); break;
