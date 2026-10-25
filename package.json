@@ -1,0 +1,30 @@
+{
+  "name": "ai-empires",
+  "version": "1.0.0",
+  "description": "Browser RTS with Player vs AI and AI vs AI LLM commanders",
+  "scripts": {
+    "dev:server": "tsx watch src/server/index.ts",
+    "dev:client": "vite",
+    "build": "vite build",
+    "start": "vite build && tsx src/server/index.ts",
+    "serve": "tsx src/server/index.ts",
+    "typecheck": "tsc -p .",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "better-sqlite3": "^12.4.1",
+    "three": "^0.180.0"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@types/node": "^20.19.23",
+    "@types/three": "^0.180.0",
+    "playwright-core": "^1.61.0",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3",
+    "vite": "^7.1.12",
+    "vitest": "^3.2.4"
+  },
+  "type": "module",
+  "private": true
+}
