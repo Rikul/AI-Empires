@@ -155,6 +155,3 @@ tools/             model gallery page for inspecting every unit/building model
 npm test             # rules, maps, determinism, pacing, pause, replay, import validation
 npm run typecheck
 ```
-
-`npx tsx scripts/run.ts Medium DesertOasis myseed 60` plays a full headless AI-vs-AI match with
-the scripted commander and prints progress.

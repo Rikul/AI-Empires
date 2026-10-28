@@ -28,8 +28,8 @@ export function newRecord(config: MatchConfig, id: string, name: string): MatchR
   };
 }
 
-export function decisionIntervalTicks(c: MatchConfig) { return Math.max(1, Math.round(c.decisionIntervalSec * TICK_RATE)); }
-export function decisionWindowTicks(c: MatchConfig) { return Math.max(1, Math.round(c.decisionWindowSec * TICK_RATE)); }
+export function decisionIntervalTicks(c: MatchConfig) { return Math.round(c.decisionIntervalSec * TICK_RATE); }
+export function decisionWindowTicks(c: MatchConfig) { return Math.round(c.decisionWindowSec * TICK_RATE); }
 
 /** Insert keeping the log sorted by tick (stable: after existing entries of the same tick). */
 export function insertCommand(log: LoggedCommand[], c: LoggedCommand) {
