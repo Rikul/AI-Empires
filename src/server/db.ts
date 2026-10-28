@@ -84,10 +84,9 @@ export class Store {
 
   insert(rec: MatchRecord, snapshot?: unknown) {
     const log: Log = { commands: rec.commands, decisions: rec.decisions, checksums: rec.checksums };
-    const config = { ...rec.config, decisionIntervalSec: -rec.config.decisionIntervalSec };
     this.db.prepare(`INSERT INTO matches (id,name,mode,status,created_at,updated_at,current_tick,config_json,result_json,log_gz,snapshot_gz,snapshot_tick)
       VALUES (?,?,?,?,?,?,?,?,?,?,?,?)`).run(
-      rec.id, rec.name, rec.config.mode, rec.status, rec.createdAt, rec.updatedAt, rec.currentTick, JSON.stringify(config),
+      rec.id, rec.name, rec.config.mode, rec.status, rec.createdAt, rec.updatedAt, rec.currentTick, JSON.stringify(rec.config),
       rec.result ? JSON.stringify(rec.result) : null, gz(JSON.stringify(log)),
       snapshot ? gz(JSON.stringify(snapshot)) : null, snapshot ? (snapshot as { tick: number }).tick : null,
     );
